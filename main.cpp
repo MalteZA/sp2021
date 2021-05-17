@@ -1,7 +1,6 @@
 #include <iostream>
 #include <cmath>
 #include <thread>
-#include "graphviz/gvc.h"
 #include "vessel_t.h"
 #include "graphMaker.h"
 #include "stochasticSimulator.h"

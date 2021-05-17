@@ -65,7 +65,7 @@ public:
         return rulesWithDelay.front();
     }
 
-    static double applyRule(const std::pair<double, std::shared_ptr<rule_t<reactant_t>>>& pair) {
+    static double applyRule(const std::pair<double, std::shared_ptr<rule_t<reactant_t>>>& pair, bool& changes) {
         // Rule Applicable wrt. inputs?
         for (const auto& r : pair.second->getInput()) {
             if (r->getAmount() <= 0) return pair.first;
@@ -77,6 +77,7 @@ public:
         }
 
         // Rule is applicable, if we reached here. Apply.
+        changes = true;
         for (const auto& r : pair.second->getInput()) {
             auto current = r->getAmount();
             r->setAmount(current - 1);
@@ -101,14 +102,17 @@ public:
         double currentTime{0.0};
         file << saveState(vessel.getReactants(), currentTime);
         while (currentTime < MaxTime) {
+            auto changes = false;
             // Calculate delay for every rule and choose lowest
             auto nextReaction = calculateDelays(vessel.getRules());
 
             // Apply rule (if applicable)
-            currentTime += applyRule(nextReaction);
+            currentTime += applyRule(nextReaction, changes);
 
             // Save state
-            file << saveState(vessel.getReactants(), currentTime);
+            if (changes) {
+                file << saveState(vessel.getReactants(), currentTime);
+            }
         }
 
         file.close();
