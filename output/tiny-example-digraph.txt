@@ -1,0 +1,12 @@
+digraph{
+	A[label="A", shape="box", style="filled", fillcolor="cyan"];
+	B[label="B", shape="box", style="filled", fillcolor="cyan"];
+	C[label="C", shape="box", style="filled", fillcolor="cyan"];
+	D[label="D", shape="box", style="filled", fillcolor="cyan"];
+	r0[label="1.000000e-03",shape="oval",style="filled",fillcolor="yellow"];
+	D -> r0 [arrowhead="tee"];
+	B -> r0;
+	B -> r0;
+	A -> r0;
+	r0 -> C;
+}

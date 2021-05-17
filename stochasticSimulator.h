@@ -93,7 +93,7 @@ public:
     /// multiple of the same reactant aren't calculated correctly.
     static void simulate(const vessel_t& vessel, const double MaxTime, const std::string& outputFileName) {
         std::cout << "started calculating " + outputFileName << std::endl;
-        auto relativeFileName = "../../" + outputFileName + ".csv";
+        auto relativeFileName = "../output/" + outputFileName + ".csv";
         std::ofstream file;
         file.open(relativeFileName);
         file << writeHeaders(vessel.getReactants());

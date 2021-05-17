@@ -5,6 +5,8 @@
 #include "graphMaker.h"
 #include "stochasticSimulator.h"
 
+#include "graphviz/gvc.h"
+
 /** small first example */
 vessel_t tiny_example()
 {
