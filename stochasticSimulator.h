@@ -4,11 +4,14 @@
 #include <list>
 #include <random>
 #include <algorithm>
+#include <chrono>
+#include <mutex>
 #include "vessel_t.h"
 
 class stochasticSimulator {
 private:
 public:
+    static std::mutex writing_lock;
     static std::string saveState(const std::vector<std::shared_ptr<reactant_t>>& vector, double currentTime) {
         std::string s = std::to_string(currentTime);
         for (const auto& v : vector) {
@@ -92,7 +95,10 @@ public:
     /// Simulate according to algorithm. Doesn't work correctly, as some calculations for reactions with
     /// multiple of the same reactant aren't calculated correctly.
     static void simulate(const vessel_t& vessel, const double MaxTime, const std::string& outputFileName) {
+        writing_lock.lock();
+        auto start = std::chrono::high_resolution_clock::now();
         std::cout << "started calculating " + outputFileName << std::endl;
+        writing_lock.unlock();
         auto relativeFileName = "../output/" + outputFileName + ".csv";
         std::ofstream file;
         file.open(relativeFileName);
@@ -116,7 +122,11 @@ public:
         }
 
         file.close();
-        std::cout << "Finished " + outputFileName + "!" << std::endl;
+        writing_lock.lock();
+        auto stop = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+        std::cout << "Finished " + outputFileName + " in " << duration.count() / 1000 << " milliseconds!" << std::endl;
+        writing_lock.unlock();
     }
 };
 

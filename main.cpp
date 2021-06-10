@@ -5,7 +5,7 @@
 #include "graphMaker.h"
 #include "stochasticSimulator.h"
 
-#include "graphviz/gvc.h"
+std::mutex stochasticSimulator::writing_lock;
 
 /** small first example */
 vessel_t tiny_example()
@@ -149,25 +149,29 @@ int main() {
     auto tinyExample_v = tiny_example();
     auto circadianOscillator_v = circadian_oscillator();
     auto circadianOscillator2_v = circadian_oscillator2();
+    auto seihr_ex_v = seihr(10000);  // Magic number - sorry. Found in assignment.
     auto seihr_NJ_v = seihr(589755);  // Magic number - sorry. Found in assignment.
-    auto seihr_DK_v = seihr(10000); // Reduced to produce lov enough amount of output.
+    auto seihr_DK_v = seihr(5822763); // Magic number - sorry. Found in assignment.
 
     // Output vessels to Graphviz digraph entities -RQ2
     graphMaker::vesselToDigraph(tinyExample_v, "tiny-example-digraph");
     graphMaker::vesselToDigraph(circadianOscillator_v, "CO-digraph");
     graphMaker::vesselToDigraph(circadianOscillator2_v, "CO-2-digraph");
+    graphMaker::vesselToDigraph(seihr_ex_v, "seihr-ex-digraph");
     graphMaker::vesselToDigraph(seihr_NJ_v, "seihr-nj-digraph");
     graphMaker::vesselToDigraph(seihr_DK_v, "seihr-dk-digraph");
 
     // Simulate the reaction rules and output to .csv -RQ4,5
     std::thread t1(stochasticSimulator::simulate, tinyExample_v, 200, "tiny-example-data");
     std::thread t2(stochasticSimulator::simulate, circadianOscillator2_v, 100, "circadian-oscillator-data");
-    std::thread t3(stochasticSimulator::simulate, seihr_NJ_v, 200, "seihr-nj-data");
-    std::thread t4(stochasticSimulator::simulate, seihr_DK_v, 200, "seihr-dk-data");
+    std::thread t3(stochasticSimulator::simulate, seihr_ex_v, 200, "seihr-ex-data");
+    std::thread t4(stochasticSimulator::simulate, seihr_NJ_v, 200, "seihr-nj-data");
+    std::thread t5(stochasticSimulator::simulate, seihr_DK_v, 200, "seihr-dk-data");
 
     t1.join();
     t2.join();
     t3.join();
     t4.join();
+    t5.join();
     return 0;
 }
